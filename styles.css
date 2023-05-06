@@ -1,0 +1,79 @@
+/* transitioning the background property is ineficient */
+.board {
+    width: 1000px;
+    height: 1000px;
+    display: grid;
+    grid-template-columns: repeat(20, 0.5fr);
+    grid-template-rows: repeat(20, 0.5fr);
+}
+
+
+.path {
+    background: yellow;
+    /* border-color: color; */
+    border: 3px solid white;
+    transition: background 500ms;
+}
+.searchCell {
+    background: cyan;
+    transition: background 600ms;
+}
+.validCell {
+    animation-name: opacity-anm;
+    animation-duration: 200ms;
+    background: rgb(21, 0, 116);
+    transform: background 600ms;
+}
+body {
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.079);
+}
+
+.dot {
+    position: absolute;
+    width: 30%;
+    aspect-ratio: 1;
+    background-color: rgb(84, 84, 84);
+    /* transform: translate(-50%, -50%); */
+    border-radius: 50%;
+    z-index: -1;
+}
+
+
+.obstacle {
+    background: black;
+    border-color: black;
+    /* animation-name: opacity-anm; */
+    /* animation-duration: 100ms; */
+    transition: background 250ms;
+}
+
+.visited {
+    border-color: yellowgreen;
+}
+
+.cell {
+    position: relative;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.START {
+    background-color: lime;
+}
+
+.END {
+    background-color: red;    
+}
+
+
+
+@keyframes opacity-anm {
+    from {
+        opacity: 0;
+    } to {
+        opacity: 1;
+    }
+}

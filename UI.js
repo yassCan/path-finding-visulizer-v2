@@ -1,5 +1,33 @@
-const BOARD = document.querySelector(".board");
+const board = document.querySelector(".board");
 let isDebug = true;
+// board width:  1000px &&
+// board height: 1000px to work with
+// clientWidth: board width: 1000
+// clientHeight: board height: 1000
+
+
+const BOARD_HEIGHT = 60 // number of cells
+const BOARD_WIDTH = 60 // number of cells
+let CELL_HEIGHT = board.clientHeight / BOARD_HEIGHT
+let CELL_WIDTH = board.clientWidth / BOARD_WIDTH
+// n: total number of cells
+
+let n = BOARD_HEIGHT * BOARD_WIDTH
+
+for(let i = 0;i < n;i++) {
+    // c: cell element
+    let c = document.createElement("div")
+    c.classList.add("cell")
+    board.append(c)
+}
+
+board.style["grid-template-columns"] = `repeat(${BOARD_WIDTH}, ${CELL_WIDTH}px)`
+board.style["grid-template-rows"] = `repeat(${BOARD_HEIGHT}, ${CELL_HEIGHT}px)`
+
+
+
+board.children[Math.floor(Math.random()*board.children.length)].classList.add("START");
+board.children[Math.floor(Math.random()*board.children.length)].classList.add("END");
 
 [...document.querySelectorAll(".cell")].forEach(cell => {
     cell.style.border = "none"
@@ -7,6 +35,7 @@ let isDebug = true;
     dot.classList.add("dot");
     cell.append(dot)
 })
+
 function setEventListener() {   
 
     for(const cell of cells) {
@@ -37,7 +66,7 @@ function setEventListener() {
         cell.ondragend = _ => clearCellsEvent(false);
     }
 
-    start.addEventListener("dragstart", _ => {
+    start.addEventListener("dragstart", (e) => {
         clearCellsEvent(false);
         cells.forEach(cell => {
             if(cell.classList.contains("END") || cell.classList.contains("obstacle")) return;

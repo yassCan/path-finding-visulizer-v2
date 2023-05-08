@@ -4,8 +4,8 @@
 // is incrementing
 // <!>
 
-const BOARD_HEIGHT = 20;
-const BOARD_WIDTH = 20;
+// BOARD_HEIGHT OR WIDTH: number of cells 
+
 const cells = [...document.querySelectorAll(".cell")];
 const cellsTable = cells2Darray();
 const cellsClass = [...cells.map(x => new Cell(x))]
@@ -14,10 +14,13 @@ let tries = 3;
 let count = 0;
 let [start, end] = [document.querySelector(".START"), document.querySelector(".END")];
 let [startNodeClass] = cellsClass.filter(cellClass => cellClass.element.classList.contains("START"));
+
+// debug()
+
+
 // logic for dragging elements and events
-// let maxOpenSetLength = Math.floor((dist(start, end) - document.querySelectorAll(".obstacle").length));
 setEventListener();
-debug()
+
 function setObstacles() {
    cells.forEach(c => {
         c.classList.remove("obstacle")
@@ -26,7 +29,7 @@ function setObstacles() {
         c.classList.remove("validCell")
     })
     cells.forEach(c => {
-        if(Math.random()*100 < 27) {
+        if(Math.random()*100 < 35) {
             if(c.classList.contains("START") || c.classList.contains("END")) return
             c.classList.add("obstacle")
         }
@@ -43,7 +46,8 @@ function clearBoard() {
 }
 
 const sleep = ms => new Promise(res => setTimeout(res, ms));
-// return a grid of cells, 2d array if the cells( divs )
+
+// return a grid of cells, 2d array of the cells( divs )
 function cells2Darray() {
     const arr = [[]];
     let count = 0;
@@ -81,8 +85,7 @@ function getPos(element) {
 function dist(a, b) {
     const [aX, aY] = getPos(a);
     const [bX, bY] = getPos(b);
-    // const aDim = a.getBoundingClientRect();
-    // const bDim = b.getBoundingClientRect()
+
 
     const distanceX = (aX  - bX) ** 2;
     const distanceY = (aY - bY) ** 2;
@@ -118,38 +121,25 @@ async function AStar() {
         } 
         let current = openSet[uIndex]
         if(current === end) {
-            // var path = []
-            // let temp = current
-            // path.push(temp)
-            // while(temp.previous) {
-            //     path.push(temp.previous)
-            //     console.log(path);
-            //     temp = temp.previous
-            // }
-            // for(let i = path.length-1;i >= 0;i--)  {
-            //     const node = path[i]
-            //     await sleep(15)
-            //     if(node.classList.contains("START") ||
-            //        node.classList.contains("END")) continue
-            //     node.classList.remove("searchCell")
-            //     node.classList.add("path")
-            // }
-            // break
-            const v = async a => {
-                if(a.previous) {
-                    a.previous.classList.remove("searchCell")
-                    a.previous.classList.add("path")
-                    await sleep(50)
-                    v(a.previous)
+            // showPath: utility function that renders the path
+            // n: node
+            const showPath = async n => {
+                if(n.previous.classList.contains("START")) 
+                    return
+
+                if(n.previous) {
+                    await sleep(3)
+                    n.previous.classList.remove("searchCell")
+                    n.previous.classList.add("path")
+                    showPath(n.previous)
                 } 
             }
-            v(current)
+            showPath(current)
             break
         }
 
         removeFromArray(openSet, current)
         closedSet.push(current)
-        await sleep(10)
         current.classList.add("searchCell")
         for(const neighbor of neighborsOf(current)) {
             if(!closedSet.includes(neighbor)){
@@ -170,6 +160,7 @@ async function AStar() {
             neighbor.g = current.g + 1       
         }
     }
+
 }
 
 
@@ -280,39 +271,14 @@ async function AStar() {
 //     }
 
 // }
-
-
-
-
-// function search(startNodeClass) {
-//     const [endNodeClass] = cellsClass.filter(x => x.element === end);
-//     for(const cell of cells) {
-//         computedElements.push({
-//             f: dist(cell, end) + 1,
-//             cell,
-//         })
-//     }    
-
-//     console.log(computedElements);
-// }
-
-function swap(a, b, arr) {
-    const curr = arr[a];
-    arr[a] = arr[b];
-    arr[b] = curr;
-}
+window.addEventListener("keydown", ({ keyCode }) => (keyCode !== 13) ? "" : startSearch())
 
 function startSearch() {
-    count = 0;
-    cells.forEach(cell => {
-        cell.classList.remove("searchCell")
-        cell.classList.remove("validCell")
-        cell.classList.remove("usedCell")
-        cell.classList.remove("path")
+    cells.forEach(c => {
+        c.classList.remove("searchCell")
+        c.classList.remove("path")
+        c.classList.remove("validCell")
     })
-    openSet = [[]];
-    [startNodeClass] = cellsClass.filter(cellClass => cellClass.element.classList.contains("START"));
-    [endNodeClass] =  cellsClass.filter(x => x.element.classList.contains("END"));
-    AStar(startNodeClass)
+    AStar()
 }
 
